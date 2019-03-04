@@ -1,0 +1,1 @@
+echo ""\\C-b": unix-filename-rubout" >> ~/.inputrc
