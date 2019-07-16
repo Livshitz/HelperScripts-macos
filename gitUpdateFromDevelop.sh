@@ -6,4 +6,4 @@ git pull
 git checkout $curBranch 
 git merge $targetBranch -m "= merge from develop" 
 git push
-# 2
+# 3
