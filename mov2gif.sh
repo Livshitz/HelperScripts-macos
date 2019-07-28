@@ -3,14 +3,14 @@ src=$1
 dest=$2
 scale=${3:-1}
 
-if [ -z "$var" ]
+if [ -z "$dest" ]
 then
 	dest="${src%.*}.gif"
 fi
 
 echo "options: $3 - ${@:4}"
 rm $dest
-ffmpeg -i $src  -vf "scale=iw:ih" -pix_fmt rgb24 -b:v 100000 -r 10 $dest
+ffmpeg -i $src -vf "scale=iw:ih" -pix_fmt rgb24 -b:v 100000 -r 10 $dest
 gifsicle -O5 $dest -o $dest --scale $scale
 
 echo "Done!"
