@@ -1,3 +1,5 @@
+# Usage: \curl -sSL https://raw.githubusercontent.com/Livshitz/HelperScripts-macos/master/chromeDriverInstall.sh | bash -s mac64 76.0.3809.25
+
 set -e
 
 ARCH=${1:-"mac64"}
