@@ -1,4 +1,4 @@
-.#!/bin/bash
+#!/bin/bash
 src=$1
 dest=$2
 scale=${3:-1}
