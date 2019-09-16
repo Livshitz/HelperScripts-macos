@@ -1,1 +1,3 @@
-du -hs * | sort -hs
+target=${1:-'.'}
+
+du -hs $target* | sort -hs
