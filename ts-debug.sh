@@ -1,1 +1,1 @@
-node --inspect -r ts-node/register $1
+node --inspect -r ts-node/register $1 $@;
