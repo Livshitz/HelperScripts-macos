@@ -15,7 +15,8 @@ ffmpeg -i $src -vf "scale=iw:ih" -pix_fmt rgb24 -b:v 100000 -r 10 $dest
 # ffmpeg -i $src -f gif -r 10 -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" $dest
 gifsicle -O5 $dest -o $dest --scale $scale
 
-echo "Done!"
+echo "Done! Size:"
+du -sh $dest
 
 
 # Convert video to gif file.
