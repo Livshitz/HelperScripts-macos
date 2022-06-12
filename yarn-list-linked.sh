@@ -1,0 +1,1 @@
+find . -type l | grep -v .bin | sed 's/^\.\/node_modules\///'
