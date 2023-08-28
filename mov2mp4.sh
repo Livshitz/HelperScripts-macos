@@ -20,6 +20,7 @@ rm "$dest"
 ffmpeg -i "$src" -vf "scale=trunc(iw/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
 
 echo "Done! Size:"
+du -sh "$src"
 du -sh "$dest"
 
 
