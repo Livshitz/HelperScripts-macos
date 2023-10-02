@@ -1,5 +1,5 @@
 #!/bin/bash
-branch=${1:-"master"}
+branch=${1:-"main"}
 
 curBranch=`git branch | grep \* | cut -d ' ' -f2`
 targetBranch=$branch
