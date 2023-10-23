@@ -4,7 +4,7 @@ framerate=${2:-24}
 
 if [ -z "$dest" ]
 then
-	dest="${src%.*}.mp4"
+	dest="${src%.*}-out.mp4"
 fi
 
 echo "options: $framerate - ${@:3}"
@@ -17,7 +17,8 @@ rm "$dest"
 # ffmpeg -i "$src" -c:v libx264 -preset slow -crf 23 -c:a aac -b:a 128k -movflags +faststart -vf "scale=-1:-1,format=yuv420p" -r "$framerate" "$dest"
 # ffmpeg -i "$src" -c:v libx264 -preset slow -crf 28 -c:a aac -b:a 96k -movflags +faststart -vf "scale=-1:-1,format=yuv420p" -r "$framerate" "$dest"
 
-ffmpeg -i "$src" -vf "scale=trunc(iw/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
+# ffmpeg -i "$src" -vf "scale=trunc(iw/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
+ffmpeg -i "$src" -vf "scale=trunc(oh*a/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
 
 echo "Done! Size:"
 du -sh "$src"
