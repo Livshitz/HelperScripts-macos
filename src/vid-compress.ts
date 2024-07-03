@@ -1,4 +1,6 @@
 // bun run debug src/vid-compress.ts '/Users/livshitz/Downloads/to-compress/7edf27efab1b6f415c886f77fc0b13f0.mp4' 0.4 0.4 '/Users/livshitz/Downloads/to-compress/compressed'
+// run-script.sh vid-compress.ts '/Users/livshitz/Desktop/zuz-walkthrough-login.mp4' 0.6 0.4 '/Users/livshitz/Downloads/to-compress/compressed' --noSound
+// run-script-debug.sh vid-compress.ts '/Users/livshitz/Desktop/zuz-walkthrough-login.mp4' 0.4 0.4 '/Users/livshitz/Downloads/to-compress/compressed' --noSound
 
 import { execSync } from 'child_process';
 import { basename, join } from 'path';
@@ -14,7 +16,12 @@ export function getFileSize(filePath: string): string {
 	return size;
 }
 
-export async function compress(src: string, scaleRatio: number, bitrateRatio?: number, outputFolder: string = './') {
+class Options {
+	noSound = false;
+}
+
+export async function compress(src: string, scaleRatio: number, bitrateRatio?: number, outputFolder: string = './', options?: Options) {
+	options = {...new Options(), ...options};
 	const dur = libx.Measurement.start();
 	console.log('args: ', { src, scaleRatio, bitrateRatio, outputFolder });
 
@@ -31,6 +38,8 @@ export async function compress(src: string, scaleRatio: number, bitrateRatio?: n
 	if (!existsSync(outputFolder)) {
 		mkdirSync(outputFolder, { recursive: true });
 	}
+
+	const noSound = options.noSound;
 
 	const originalBitrate = parseInt(execSync(`ffprobe -v error -select_streams v:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 "${src}"`).toString());
 	let newBitrate = Math.round((originalBitrate / 1000) * bitrateRatio * bitrateRatio);
@@ -53,12 +62,13 @@ export async function compress(src: string, scaleRatio: number, bitrateRatio?: n
 		width, height,
 		newBitrate,
 		newWidth, newHeight,
+		noSound,
 		srcSize: '', destSize: '',
 	};
 	console.log(`config: `, config);
 	console.log('----');
 
-	execSync(`ffmpeg -i "${src}" -vf "scale=${newWidth}:${newHeight}" -b:v "${newBitrate}k" -c:a copy "${dest}" -loglevel error -y`);
+	execSync(`ffmpeg -i "${src}" -vf "scale=${newWidth}:${newHeight}" -b:v "${newBitrate}k" -c:a copy ${noSound ? '-an' : ''} "${dest}" -loglevel error -y`);
 	const srcSize = getFileSize(src);
 	const destSize = getFileSize(dest);
 	console.log(`Original file size: ${srcSize}`);
@@ -71,10 +81,16 @@ export async function compress(src: string, scaleRatio: number, bitrateRatio?: n
 	return config;
 }
 
-// main(libx.node.args)
-if (libx.node.isCalledDirectly()) {
+// if (libx.node.isCalledDirectly()) {
+// if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
 	const args = libx.node.args;
-	compress.apply(this, args._);
+	compress.apply(this, <any>[
+		...args._,
+		<Options>{ noSound: args.noSound }
+	]);
+} else {
+	console.log('script is not called directly')
 }
 
 // Example usage: node vid-compress.ts './video.mp4' 1.5 1.2 './output/'
