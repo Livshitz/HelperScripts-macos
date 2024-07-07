@@ -18,7 +18,9 @@ async function run() {
 	
 	for(let file of files) {
 		libx.log.v('processing file', file);
-		const res = await compress(file, scaleRatio, scaleBitrate, dest);
+		const res = await compress(file, scaleRatio, scaleBitrate, {
+			out: dest,
+		});
 		libx.log.i(`done processing file. Compression rate: ${(100 - (parseInt(res.destSize)/parseInt(res.srcSize) * 100)).toFixed(2)}%`);
 	}
 	

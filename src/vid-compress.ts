@@ -3,7 +3,7 @@
 // run-script-debug.sh vid-compress.ts '/Users/livshitz/Desktop/zuz-walkthrough-login.mp4' 0.4 0.4 '/Users/livshitz/Downloads/to-compress/compressed' --noSound
 
 import { execSync } from 'child_process';
-import { basename, join } from 'path';
+import { basename, join, dirname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { libx } from "libx.js/build/bundles/node.essentials";
 
@@ -17,12 +17,18 @@ export function getFileSize(filePath: string): string {
 }
 
 class Options {
-	noSound = false;
+	noSound? = false;
+	out?: string;
 }
 
-export async function compress(src: string, scaleRatio: number, bitrateRatio?: number, outputFolder: string = './', options?: Options) {
+export async function compress(src: string, scaleRatio: number, bitrateRatio?: number, options?: Options) {
 	options = {...new Options(), ...options};
 	const dur = libx.Measurement.start();
+
+	let outputFolder = options.out;
+	if (!outputFolder) {
+		outputFolder = dirname(src);
+	}
 	console.log('args: ', { src, scaleRatio, bitrateRatio, outputFolder });
 
 	if (!src || !scaleRatio) {
@@ -87,7 +93,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 	const args = libx.node.args;
 	compress.apply(this, <any>[
 		...args._,
-		<Options>{ noSound: args.noSound }
+		<Options>{ 
+			outDir: args.out, 
+			noSound: args.noSound
+		}
 	]);
 } else {
 	console.log('script is not called directly')
