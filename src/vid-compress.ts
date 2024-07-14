@@ -58,10 +58,11 @@ export async function compress(src: string, scaleRatio: number, bitrateRatio?: n
 	let newHeight = Math.round(height * scaleRatio);
 	if (newWidth < minWidth) {
 		newWidth = minWidth;
-		newHeight = newWidth/width * height;
+		newHeight = Math.round(newWidth/width * height);
 	}
+	if (newHeight % 2 == 1) newHeight++;
+	if (newWidth % 2 == 1) newWidth++;
 
-	console.log('----');
 	let config = { 
 		src, scaleRatio, bitrateRatio, dest, 
 		originalBitrate, 
