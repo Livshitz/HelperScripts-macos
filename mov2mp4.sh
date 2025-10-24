@@ -1,13 +1,15 @@
 #!/bin/bash
 src=$1
-framerate=${2:-24}
+resolution=${2:-720}
+framerate=${3:-24}
+keep_original=${4:-false}
 
 if [ -z "$dest" ]
 then
 	dest="${src%.*}-out.mp4"
 fi
 
-echo "options: $framerate - ${@:3}"
+echo "options: resolution=$resolution, framerate=$framerate, keep_original=$keep_original - ${@:5}"
 # echo "1) $1, 2) $2, 3) $3, dest: $dest"
 rm "$dest"
 
@@ -18,15 +20,25 @@ rm "$dest"
 # ffmpeg -i "$src" -c:v libx264 -preset slow -crf 28 -c:a aac -b:a 96k -movflags +faststart -vf "scale=-1:-1,format=yuv420p" -r "$framerate" "$dest"
 
 # ffmpeg -i "$src" -vf "scale=trunc(iw/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
-ffmpeg -i "$src" -vf "scale=trunc(oh*a/2)*2:480" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
+
+# Keep original resolution and framerate
+if [ "$keep_original" = "true" ]; then
+	ffmpeg -i "$src" -c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 128k -movflags +faststart -pix_fmt yuv420p "$dest"
+else
+	# Scale to specified resolution and framerate
+	ffmpeg -i "$src" -vf "scale=trunc(oh*a/2)*2:$resolution" -c:v libx264 -preset veryfast -crf $framerate -c:a aac -b:a 128k -movflags +faststart "$dest"
+fi
 
 echo "Done! Size:"
 du -sh "$src"
 du -sh "$dest"
 
 
-# Convert mov video to mp4 file.
-# Usage: mov2mp4 video_file
+# Convert mov/webm video to mp4 file.
+# Usage: mov2mp4 video_file [resolution] [framerate] [keep_original]
+# Example: mov2mp4 input.mov 30 1080
+# Example (keep original): mov2mp4 input.webm 0 0 true
+# Defaults: resolution=720, framerate=24, keep_original=false
 
 
 # Replace `input.mov` with the name of your .mov file and `output.mp4` with the desired name for the converted .mp4 file.
