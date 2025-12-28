@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to reset current branch to match another branch locally
-# Usage: ./reset-branch.sh <target-branch>
+# Script to reset current branch to match another branch locally and remotely
+# Usage: ./git-reset.sh <target-branch>
 
 if [ -z "$1" ]; then
   echo "Error: No target branch specified"
@@ -27,6 +27,7 @@ fi
 
 echo "Current branch: $CURRENT_BRANCH"
 echo "Resetting to: $TARGET_BRANCH"
+echo "This will reset locally AND force push to origin"
 echo ""
 read -p "Are you sure? This will discard all changes on $CURRENT_BRANCH (y/N): " -n 1 -r
 echo ""
@@ -39,6 +40,9 @@ fi
 # Reset current branch to target branch
 git reset --hard "$TARGET_BRANCH"
 
+# Force push to origin
+git push origin "$CURRENT_BRANCH" --force
+
 echo ""
-echo "✓ Successfully reset $CURRENT_BRANCH to $TARGET_BRANCH"
+echo "✓ Successfully reset $CURRENT_BRANCH to $TARGET_BRANCH (locally and remotely)"
 
