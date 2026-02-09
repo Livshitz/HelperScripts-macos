@@ -1,0 +1,1 @@
+for-each-ref --sort=-committerdate refs/heads/ --format='%(committerdate:short) %(refname:short)'
