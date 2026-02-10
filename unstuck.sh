@@ -1,0 +1,1 @@
+killall StageManager 2>/dev/null; killall WindowManager 2>/dev/null; echo "done"
